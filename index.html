@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expositor Interactivo: Hoja Caulinar de Guadua - Adalberto Zapata Suárez</title>
+    <style>
+        :root {
+            --primary: #2e7d32;
+            --primary-dark: #1b5e20;
+            --secondary: #8d6e63;
+            --bg-light: #f4f6f0;
+            --card-bg: #ffffff;
+            --text-main: #2c3e50;
+            --accent-yellow-green: #d4e157;
+            --accent-olive: #9e9d24;
+            --accent-sepia: #5d4037;
+            --accent-green-dark: #33691e;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-light);
+            color: var(--text-main);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 25px;
+            max-width: 900px;
+        }
+
+        header h1 {
+            color: var(--primary-dark);
+            font-size: 2rem;
+            margin-bottom: 8px;
+        }
+
+        header p {
+            color: #555;
+            font-size: 1rem;
+        }
+
+        .author-badge {
+            display: inline-block;
+            background-color: var(--primary);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            margin-top: 8px;
+            font-weight: 600;
+        }
+
+        /* Carousel Container */
+        .carousel-container {
+            width: 100%;
+            max-width: 1000px;
+            perspective: 1000px;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .carousel-cards {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .card {
+            width: 280px;
+            height: 380px;
+            border-radius: 16px;
+            padding: 20px;
+            color: white;
+            position: relative;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.25);
+        }
+
+        /* Card 1: Revestimiento (Verde Amarillento + Hojas/Ramas de Bambú) */
+        .card-revestimiento {
+            background: linear-gradient(135deg, var(--accent-yellow-green), var(--accent-olive));
+            color: #1a2500;
+        }
+
+        .card-revestimiento::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image: radial-gradient(#827717 10%, transparent 11%),
+                              radial-gradient(#827717 10%, transparent 11%);
+            background-size: 20px 20px;
+            background-position: 0 0, 10px 10px;
+            opacity: 0.15;
+            pointer-events: none;
+        }
+
+        .bamboo-pattern {
+            position: absolute;
+            bottom: -10px;
+            right: -10px;
+            width: 140px;
+            height: 140px;
+            opacity: 0.25;
+            pointer-events: none;
+        }
+
+        /* Card 2: Empaques (Verde + Sepia + Hoja Caulinar) */
+        .card-empaques {
+            background: linear-gradient(135deg, var(--accent-green-dark), var(--accent-sepia));
+            color: #ffffff;
+        }
+
+        .caulinar-pattern {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 160px;
+            height: 160px;
+            opacity: 0.3;
+            pointer-events: none;
+        }
+
+        /* Card 3: Paneles Acústicos / Artesanías */
+        .card-artesanias {
+            background: linear-gradient(135deg, #2e7d32, #1565c0);
+            color: #ffffff;
+        }
+
+        .card-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            z-index: 2;
+        }
+
+        .card-subtitle {
+            font-size: 0.85rem;
+            opacity: 0.9;
+            z-index: 2;
+            margin-top: 4px;
+        }
+
+        .card-body {
+            z-index: 2;
+            font-size: 0.9rem;
+            line-height: 1.4;
+            margin-top: 15px;
+        }
+
+        .card-btn {
+            align-self: start;
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            color: inherit;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            cursor: pointer;
+            z-index: 2;
+            transition: background 0.3s ease;
+        }
+
+        .card-btn:hover {
+            background: rgba(255, 255, 255, 0.45);
+        }
+
+        /* Inspector / Detail Section */
+        .inspector-panel {
+            width: 100%;
+            max-width: 1000px;
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+        }
+
+        @media (max-width: 768px) {
+            .inspector-panel {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .viewer-box {
+            background: #eef2e6;
+            border-radius: 12px;
+            height: 280px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px dashed #a5d6a7;
+            overflow: hidden;
+        }
+
+        .hotspot {
+            position: absolute;
+            width: 22px;
+            height: 22px;
+            background-color: #e65100;
+            border: 3px solid #ffffff;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 8px rgba(0,0,0,0.3);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(230, 81, 0, 0.7); }
+            70% { transform: scale(1.1); box-shadow: 0 0 0 10px rgba(230, 81, 0, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(230, 81, 0, 0); }
+        }
+
+        .controls-box {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .control-group {
+            margin-bottom: 12px;
+        }
+
+        .control-group label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+            color: #444;
+        }
+
+        .control-group select, .control-group input[type="range"] {
+            width: 100%;
+            padding: 8px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+        }
+
+        /* Calculator Section */
+        .calculator-panel {
+            width: 100%;
+            max-width: 1000px;
+            background: #2e7d32;
+            color: white;
+            border-radius: 16px;
+            padding: 20px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .metric {
+            text-align: center;
+        }
+
+        .metric-val {
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: var(--accent-yellow-green);
+        }
+
+        .metric-lbl {
+            font-size: 0.8rem;
+            opacity: 0.9;
+        }
+
+        /* Download / Export Button */
+        .btn-download {
+            background-color: var(--primary-dark);
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transition: background 0.3s;
+        }
+
+        .btn-download:hover {
+            background-color: #0d3b11;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Artefacto Interactivo: Aplicaciones de la Hoja Caulinar</h1>
+        <p>Exploración y configuración de productos industrializados a partir del capacho de guadua</p>
+        <div class="author-badge">Investigador Principal: Adalberto Zapata Suárez</div>
+    </header>
+
+    <!-- Carousel Section -->
+    <div class="carousel-container">
+        <div class="carousel-cards">
+            
+            <!-- Card 1: Revestimiento (Verde Amarillento con Bambú) -->
+            <div class="card card-revestimiento" onclick="selectProduct('revestimiento')">
+                <div>
+                    <div class="card-title">Revestimiento Arq.</div>
+                    <div class="card-subtitle">Paneles Flexibles de Pared</div>
+                    <div class="card-body">
+                        Chapas flexibilizadas mediante tratamiento térmico. Apto para arquitectura de interiores y acabados sostenibles.
+                    </div>
+                </div>
+                <!-- SVG Bambú -->
+                <svg class="bamboo-pattern" viewBox="0 0 100 100">
+                    <path d="M20 100 L20 0 M25 100 L25 0 M22 30 L35 20 M22 60 L38 50" stroke="#33691e" stroke-width="3" fill="none" />
+                    <path d="M60 100 L60 0 M65 100 L65 0 M62 40 L80 25 M62 75 L78 65" stroke="#33691e" stroke-width="4" fill="none" />
+                    <circle cx="35" cy="20" r="4" fill="#558b2f"/>
+                    <circle cx="80" cy="25" r="5" fill="#558b2f"/>
+                </svg>
+                <button class="card-btn">Inspeccionar</button>
+            </div>
+
+            <!-- Card 2: Empaques (Verde y Sepia con Hoja Caulinar) -->
+            <div class="card card-empaques" onclick="selectProduct('empaques')">
+                <div>
+                    <div class="card-title">Empaques Eco-Premium</div>
+                    <div class="card-subtitle">Sustituto de Plásticos y Cartón</div>
+                    <div class="card-body">
+                        Termoconformado de fibra prensada para estuches rígidos, cajas de lujo y empaques biodegradables.
+                    </div>
+                </div>
+                <!-- SVG Hoja Caulinar -->
+                <svg class="caulinar-pattern" viewBox="0 0 100 100">
+                    <path d="M10 90 Q 50 10 90 90 Z" fill="#8d6e63" stroke="#d7ccc8" stroke-width="2"/>
+                    <path d="M50 15 L50 85 M30 40 Q 50 50 70 40 M25 60 Q 50 70 75 60" stroke="#d7ccc8" stroke-width="1.5" fill="none"/>
+                </svg>
+                <button class="card-btn">Inspeccionar</button>
+            </div>
+
+            <!-- Card 3: Paneles / Artesanías -->
+            <div class="card card-artesanias" onclick="selectProduct('paneles')">
+                <div>
+                    <div class="card-title">Paneles Acústicos</div>
+                    <div class="card-subtitle">Absorción y Diseño Texturizado</div>
+                    <div class="card-body">
+                        Aglomerados de fibra de capacho con resinas termoestables ecológicas para acondicionamiento acústico.
+                    </div>
+                </div>
+                <button class="card-btn">Inspeccionar</button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Inspector Panel -->
+    <div class="inspector-panel">
+        <div>
+            <h3 id="product-name" style="color: var(--primary-dark); margin-bottom: 10px;">Revestimiento Arq. Flex</h3>
+            <div class="viewer-box" id="viewer-box">
+                <!-- Dynamic SVG / Visual Render -->
+                <svg id="interactive-render" width="100%" height="100%" viewBox="0 0 300 200">
+                    <rect id="render-bg" x="20" y="20" width="260" height="160" rx="10" fill="#d4e157"/>
+                    <path id="render-texture" d="M 30 30 Q 150 50 270 30 M 30 70 Q 150 90 270 70 M 30 110 Q 150 130 270 110" stroke="#827717" stroke-width="3" fill="none" opacity="0.6"/>
+                </svg>
+                <!-- Hotspots -->
+                <div class="hotspot" style="top: 30%; left: 40%;" onclick="showInfo('Fibra natural tratada con cera vegetal para repelencia al agua.')"></div>
+                <div class="hotspot" style="top: 65%; left: 70%;" onclick="showInfo('Unión de corte micrométrico para ensamble estandarizado.')"></div>
+            </div>
+            <p id="info-display" style="font-size: 0.85rem; color: #666; margin-top: 8px; italic;">Haz clic en los puntos naranjas para ver los detalles técnicos del material.</p>
+        </div>
+
+        <div class="controls-box">
+            <h4>Configurador del Prototipo</h4>
+            
+            <div class="control-group">
+                <label>Tinte Orgánico Base</label>
+                <select id="select-tint" onchange="updateRender()">
+                    <option value="natural">Verde Oliva / Natural (H. Caulinar)</option>
+                    <option value="sepia">Sepia Cacao</option>
+                    <option value="nogal">Nogal Oscuro</option>
+                </select>
+            </div>
+
+            <div class="control-group">
+                <label>Acabado Superficial</label>
+                <select id="select-finish" onchange="updateRender()">
+                    <option value="mate">Mate Cera de Abejas</option>
+                    <option value="brillante">Satinado Ecológico</option>
+                </select>
+            </div>
+
+            <div class="control-group">
+                <label>Área de Producción Proyectada ($m^2$)</label>
+                <input type="range" id="input-area" min="10" max="500" value="100" oninput="calculateImpact()">
+                <span id="area-val" style="font-size: 0.85rem; font-weight: bold;">100 m²</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Impact Calculator Panel -->
+    <div class="calculator-panel">
+        <div class="metric">
+            <div class="metric-val" id="val-capacho">450 Kg</div>
+            <div class="metric-lbl">Capacho Reutilizado</div>
+        </div>
+        <div class="metric">
+            <div class="metric-val" id="val-co2">120 Kg</div>
+            <div class="metric-lbl">$\text{CO}_2$ Capturado / Mitigado</div>
+        </div>
+        <div class="metric">
+            <div class="metric-val" id="val-plastic">85 Kg</div>
+            <div class="metric-lbl">Plástico Sustituido</div>
+        </div>
+    </div>
+
+    <script>
+        const products = {
+            revestimiento: {
+                title: "Revestimiento Arq. Flex",
+                bg: "#d4e157",
+                stroke: "#827717",
+                info1: "Laminado flexible de fibra caulinar estandarizada.",
+                info2: "Recubrimiento hidrófugo con cera orgánica."
+            },
+            empaques: {
+                title: "Empaques Eco-Premium",
+                bg: "#5d4037",
+                stroke: "#d7ccc8",
+                info1: "Estructura termoconformada de alta densidad.",
+                info2: "Biodegradable en 90 días en compost de jardín."
+            },
+            paneles: {
+                title: "Paneles Acústicos",
+                bg: "#2e7d32",
+                stroke: "#a5d6a7",
+                info1: "Núcleo poroso absorbente de frecuencias medias.",
+                info2: "Ensamble macho-hembra para rápida instalación."
+            }
+        };
+
+        let currentProduct = 'revestimiento';
+
+        function selectProduct(key) {
+            currentProduct = key;
+            const p = products[key];
+            document.getElementById('product-name').innerText = p.title;
+            document.getElementById('render-bg').setAttribute('fill', p.bg);
+            document.getElementById('render-texture').setAttribute('stroke', p.stroke);
+            document.getElementById('info-display').innerText = "Haz clic en los puntos naranjas para ver los detalles técnicos del material.";
+        }
+
+        function showInfo(text) {
+            document.getElementById('info-display').innerText = "Detalle: " + text;
+        }
+
+        function updateRender() {
+            const tint = document.getElementById('select-tint').value;
+            const bg = document.getElementById('render-bg');
+            
+            if (tint === 'sepia') {
+                bg.setAttribute('fill', '#8d6e63');
+            } else if (tint === 'nogal') {
+                bg.setAttribute('fill', '#3e2723');
+            } else {
+                bg.setAttribute('fill', products[currentProduct].bg);
+            }
+        }
+
+        function calculateImpact() {
+            const area = parseInt(document.getElementById('input-area').value);
+            document.getElementById('area-val').innerText = area + " m²";
+            
+            document.getElementById('val-capacho').innerText = (area * 4.5).toFixed(0) + " Kg";
+            document.getElementById('val-co2').innerText = (area * 1.2).toFixed(0) + " Kg";
+            document.getElementById('val-plastic').innerText = (area * 0.85).toFixed(0) + " Kg";
+        }
+    </script>
+</body>
+</html>
